@@ -57,15 +57,24 @@ public class AppointmentScheduler
 
   private async Task ScheduleAppointment(AppointmentInfoRequest appt)
   {
-    var resp = await Client.PostAsync($"Schedule?token={APIKey}", JsonContent.Create(appt));
-    resp.EnsureSuccessStatusCode();
+    string? error = null;
+    try
+    {
+      var resp = await Client.PostAsync($"Schedule?token={APIKey}", JsonContent.Create(appt));
+      error = await resp.Content.ReadAsStringAsync();
+      resp.EnsureSuccessStatusCode();
+    } catch (HttpRequestException e)
+    {
+      Console.WriteLine(error ?? e.Message);
+    }    
   }
 
   public async Task Run()
   {
     await Start();
 
-
+    Console.WriteLine(await GetInitialSchedule());
+    await ScheduleAppointment(new AppointmentInfoRequest(0, 0, "2025-11-26T21:00:37.620Z", true, 0));
 
     await Stop();
   }
