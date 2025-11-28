@@ -27,19 +27,19 @@ public partial class AppointmentScheduler
 
   private async Task HandleRequest(AppointmentRequest request)
   {
-    var a = GetAvailableTimes(request.preferredDays.Select(DateTime.Parse));
-    // foreach (var b in a)
-    // {
-    //   Console.WriteLine(b.Item1.ToUniversalTime() + "\n");
-    // }
+    var a = GetAvailableTimes(request.preferredDays.Select(DateTime.Parse), request.preferredDocs);
+    foreach (var b in a)
+    {
+      Console.WriteLine(b.Item1.ToUniversalTime() + "\n");
+    }
   }
 
-  private (DateTime, int)[] GetAvailableTimes(IEnumerable<DateTime> dates)
+  private (DateTime, int)[] GetAvailableTimes(IEnumerable<DateTime> dates, int[] doctors)
   {
-    var taken = GetTakenTimes(dates);
+    var taken = GetTakenTimes();
     return dates
       .SelectMany(GetAvailableTimes)
-      .SelectMany(GetAvailableDoctorTimes)
+      .SelectMany(d => GetAvailableDoctorTimes(d, doctors))
       .Where((d) => !taken.Contains(d))
       .ToArray();
   }
@@ -52,15 +52,15 @@ public partial class AppointmentScheduler
     }
   }
 
-  private IEnumerable<(DateTime, int)> GetAvailableDoctorTimes(DateTime date)
+  private IEnumerable<(DateTime, int)> GetAvailableDoctorTimes(DateTime date, int[] doctors)
   {
-    foreach (int doctor in Doctors)
+    foreach (int doctor in doctors)
     {
       yield return (date, doctor);
     }
   }
 
-  private IEnumerable<(DateTime, int)> GetTakenTimes(IEnumerable<DateTime> dates)
+  private IEnumerable<(DateTime, int)> GetTakenTimes()
   {
     return Schedule.Select(app => (DateTime.Parse(app.appointmentTime), app.doctorId));
   }
