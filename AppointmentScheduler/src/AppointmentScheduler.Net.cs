@@ -6,6 +6,7 @@ public partial class AppointmentScheduler
 {
   private string? APIKey { get; init; }
   private HttpClient Client { get; init; }
+  private List<AppointmentInfo> Schedule { get; set; }
 
   public AppointmentScheduler()
   {
@@ -16,8 +17,11 @@ public partial class AppointmentScheduler
     {
       throw new Exception("Must Set User Secret 'APIKey'!");
     }
+
     Client = new HttpClient();
     Client.BaseAddress = new Uri("https://scheduling.interviews.brevium.com/api/Scheduling/");
+
+    Schedule = new List<AppointmentInfo>();
   }
 
   private async Task Start()
@@ -38,8 +42,16 @@ public partial class AppointmentScheduler
   {
     var resp = await Client.GetAsync($"AppointmentRequest?token={APIKey}");
     resp.EnsureSuccessStatusCode();
-    AppointmentRequest? req = JsonSerializer.Deserialize<AppointmentRequest>(resp.Content.ReadAsStream());
-    return req;
+    try
+    {
+      AppointmentRequest? req = JsonSerializer.Deserialize<AppointmentRequest>(resp.Content.ReadAsStream());
+      return req;
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e.Message);
+      return null;
+    }
   }
 
   private async Task<AppointmentInfo[]> GetInitialSchedule()
