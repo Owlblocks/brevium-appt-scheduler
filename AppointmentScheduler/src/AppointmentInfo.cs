@@ -5,5 +5,5 @@ public record AppointmentInfo(
   bool isNewPatientAppointment
 )
 {
-  public DateTime AppointmentDateTime => DateTime.Parse(appointmentTime);
+  public DateTime AppointmentDateTime => DateTime.Parse(appointmentTime).ToUniversalTime();
 }

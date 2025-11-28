@@ -6,5 +6,5 @@ public record AppointmentInfoRequest(
   int requestId
 )
 {
-  
+  public AppointmentInfo AppointmentInfo => new AppointmentInfo(doctorId, personId, appointmentTime, isNewPatientAppointment);
 }

@@ -62,7 +62,7 @@ public partial class AppointmentScheduler
     return schedule;
   }
 
-  private async Task ScheduleAppointment(AppointmentInfoRequest appt)
+  private async Task<bool> ScheduleAppointment(AppointmentInfoRequest appt)
   {
     string? error = null;
     try
@@ -70,9 +70,11 @@ public partial class AppointmentScheduler
       var resp = await Client.PostAsync($"Schedule?token={APIKey}", JsonContent.Create(appt));
       error = await resp.Content.ReadAsStringAsync();
       resp.EnsureSuccessStatusCode();
+      return true;
     } catch (HttpRequestException e)
     {
       Console.WriteLine(error ?? e.Message);
+      return false;
     }    
   }
 
