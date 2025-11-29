@@ -1,6 +1,5 @@
 public partial class AppointmentScheduler
 {
-  private readonly int[] Doctors = { 1, 2, 3};
   public async Task Run()
   {
     await Start();
@@ -36,11 +35,11 @@ public partial class AppointmentScheduler
     try
     {
       var chosen = available
-      .Where(d => !request.isNew || d.time.Hour == 15 || d.time.Hour == 16)
-      .Where(d => d.time.Year == 2021 && (d.time.Month == 11 || d.time.Month == 12))
-      .Where(d => d.time.DayOfWeek != DayOfWeek.Sunday && d.time.DayOfWeek != DayOfWeek.Saturday)
-      .Where(d => IsFarApart(request.personId, d.time))
-      .First();
+        .Where(d => !request.isNew || d.time.Hour == 15 || d.time.Hour == 16)
+        .Where(d => d.time.Year == 2021 && (d.time.Month == 11 || d.time.Month == 12))
+        .Where(d => d.time.DayOfWeek != DayOfWeek.Sunday && d.time.DayOfWeek != DayOfWeek.Saturday)
+        .Where(d => IsFarApart(request.personId, d.time))
+        .First();
 
       AppointmentInfoRequest appointment = new AppointmentInfoRequest
         (chosen.doctor, request.personId, chosen.time.ToString("yyyy-MM-ddTHH:mm:ss.000Z"), request.isNew, request.requestId);
